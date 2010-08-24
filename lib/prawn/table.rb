@@ -230,12 +230,19 @@ module Prawn
       ref_bounds = @pdf.bounds.stretchy? ? @pdf.margin_box : @pdf.bounds
 
       last_y = @pdf.y
+      last_row_to_start_new_page = -1
+      #@cells.group_by(&:row).each do |row, cells|
       @cells.each do |cell|
-        if cell.height > (cell.y + offset) - ref_bounds.absolute_bottom
+        #puts '-'*80
+        #puts cell.content
+        #puts cell.row
+        if cell.height > (cell.y + offset) - ref_bounds.absolute_bottom && cell.row > last_row_to_start_new_page
+          #puts 'new page'
           # start a new page or column
           @pdf.bounds.move_past_bottom
           draw_header
           offset = @pdf.y - cell.y
+          last_row_to_start_new_page = cell.row
         end
  
         # Don't modify cell.x / cell.y here, as we want to reuse the original
